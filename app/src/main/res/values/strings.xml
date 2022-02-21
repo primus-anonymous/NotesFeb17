@@ -2,4 +2,9 @@
     <string name="app_name">NotesFeb17</string>
     <string name="action_list">List</string>
     <string name="action_info">Info</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="edit_title_hint">Title</string>
+    <string name="edit_content_hint">Content</string>
+    <string name="btn_save">Save</string>
 </resources>
