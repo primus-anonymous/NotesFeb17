@@ -5,9 +5,13 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentResultListener;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.neocaptainnemo.notesfeb17.ui.AuthFragment;
 import com.neocaptainnemo.notesfeb17.ui.InfoFragment;
 import com.neocaptainnemo.notesfeb17.ui.list.ListFragment;
 
@@ -19,10 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.container, new ListFragment())
-                    .commit();
+            openNotes();
         }
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
@@ -33,10 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()) {
                     case R.id.action_list:
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.container, new ListFragment())
-                                .commit();
+                        openNotes();
 
                         return true;
 
@@ -52,5 +50,30 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        getSupportFragmentManager().setFragmentResultListener(AuthFragment.KEY_AUTHORIZED, this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                openNotes();
+            }
+        });
+    }
+
+    private void openNotes() {
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+
+        if (account == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, new AuthFragment())
+                    .commit();
+
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, new ListFragment())
+                    .commit();
+        }
     }
 }

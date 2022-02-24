@@ -10,9 +10,9 @@ import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class NotesRepositoryImpl implements NotesRepository {
+public class InMemoryNotesRepositoryImpl implements NotesRepository {
 
-    public static final NotesRepository INSTANCE = new NotesRepositoryImpl();
+    public static final NotesRepository INSTANCE = new InMemoryNotesRepositoryImpl();
 
     private Executor executor = Executors.newSingleThreadExecutor();
 
@@ -20,7 +20,7 @@ public class NotesRepositoryImpl implements NotesRepository {
 
     private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
-    public NotesRepositoryImpl() {
+    public InMemoryNotesRepositoryImpl() {
 
         result.add(new Note(UUID.randomUUID().toString(), "Title 1", "Contnet 1", new Date()));
         result.add(new Note(UUID.randomUUID().toString(), "Title 2", "Contnet 2", new Date()));
@@ -111,7 +111,7 @@ public class NotesRepositoryImpl implements NotesRepository {
 
 
     @Override
-    public Note update(String id, String newTitle, String newContent) {
+    public void update(String id, String newTitle, String newContent, Callback<Note> callback) {
 
         Note toChange = null;
         int indexToChange = -1;
@@ -127,7 +127,6 @@ public class NotesRepositoryImpl implements NotesRepository {
         Note newNote = new Note(toChange.getId(), newTitle, newContent, toChange.getCreatedAt());
 
         result.set(indexToChange, newNote);
-
-        return newNote;
+        callback.onSuccess(newNote);
     }
 }
